@@ -125,45 +125,52 @@ def main():
     st.markdown("---")
 
     # stil za gumbe i input (zelena / crvena kao u Tkinteru)
-    st.markdown(
-        """
-        <style>
-        /* VIN text input – smanji širinu */
+    st.markdown("""
+    <style>
+
+        /* === Gumb PRETRAŽI (label sadrži 'Pretraži') === */
+        button[kind="primary"] p {
+            display: none !important; /* Streamlit quirks */
+        }
+
+        div.stButton > button:has(span:contains("Pretraži")) {
+            background-color: #006400 !important;
+            color: whitesmoke !important;
+            border: 1px solid #006400 !important;
+            width: 140px !important;
+            height: 40px !important;
+        }
+
+        div.stButton > button:has(span:contains("Pretraži")):hover {
+            background-color: whitesmoke !important;
+            color: #006400 !important;
+            border: 1px solid #006400 !important;
+        }
+
+
+        /* === Gumb OČISTI (label sadrži 'Očisti') === */
+        div.stButton > button:has(span:contains("Očisti")) {
+            background-color: #ff6666 !important;
+            color: whitesmoke !important;
+            border: 1px solid #ff6666 !important;
+            width: 140px !important;
+            height: 40px !important;
+        }
+
+        div.stButton > button:has(span:contains("Očisti")):hover {
+            background-color: whitesmoke !important;
+            color: #ff6666 !important;
+            border: 1px solid #ff6666 !important;
+        }
+
+        /* === VIN INPUT - smanji širinu === */
         input[type="text"] {
-            width: 320px !important;
+            width: 300px !important;
         }
 
-        /* Pretraži (drugi stupac u redu) */
-        div[data-testid="column"]:nth-of-type(2) button {
-            background-color: #006400;
-            color: whitesmoke;
-            border: 1px solid #006400;
-            width: 130px !important;
-            height: 38px !important;
-        }
-        div[data-testid="column"]:nth-of-type(2) button:hover {
-            background-color: whitesmoke;
-            color: #006400;
-            border: 1px solid #006400;
-        }
+    </style>
+    """, unsafe_allow_html=True)
 
-        /* Očisti (treći stupac u redu) */
-        div[data-testid="column"]:nth-of-type(3) button {
-            background-color: #ff6666;
-            color: whitesmoke;
-            border: 1px solid #ff6666;
-            width: 130px !important;
-            height: 38px !important;
-        }
-        div[data-testid="column"]:nth-of-type(3) button:hover {
-            background-color: whitesmoke;
-            color: #ff6666;
-            border: 1px solid #ff6666;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
 
     df, err = load_all_data()
     if err:

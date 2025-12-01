@@ -124,6 +124,38 @@ def main():
     render_header()
     st.markdown("---")
 
+    # stil za gumbe (zelena / crvena kao u Tkinteru)
+    st.markdown(
+        """
+        <style>
+        /* Pretraži (drugi stupac u redu) */
+        div[data-testid="column"]:nth-of-type(2) button {
+            background-color: #006400;
+            color: whitesmoke;
+            border: 1px solid #006400;
+        }
+        div[data-testid="column"]:nth-of-type(2) button:hover {
+            background-color: whitesmoke;
+            color: #006400;
+            border: 1px solid #006400;
+        }
+
+        /* Očisti (treći stupac u redu) */
+        div[data-testid="column"]:nth-of-type(3) button {
+            background-color: #ff6666;
+            color: whitesmoke;
+            border: 1px solid #ff6666;
+        }
+        div[data-testid="column"]:nth-of-type(3) button:hover {
+            background-color: whitesmoke;
+            color: #ff6666;
+            border: 1px solid #ff6666;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
     df, err = load_all_data()
     if err:
         st.error(err)
@@ -136,18 +168,32 @@ def main():
     # ------------------- FILTER / PRETRAGA -------------------
     st.markdown("### 🔎 Pretraga po VIN broju")
 
-    col1, col2 = st.columns([3, 1])
+    if "vin_input" not in st.session_state:
+        st.session_state.vin_input = ""
+
+    col1, col2, col3 = st.columns([3, 1, 1])
 
     with col1:
-        vin = st.text_input("Unesi VIN (točan match):", value="", max_chars=50)
+        vin = st.text_input(
+            "Unesi VIN (točan match):",
+            value=st.session_state.vin_input,
+            max_chars=50,
+            key="vin_input"
+        )
 
     with col2:
-        search_clicked = st.button("Pretraži")
+        search_clicked = st.button("🔍 Pretraži", use_container_width=True)
 
-    # U Streamlitu Enter u text_inputu ionako radi rerun,
-    # pa možemo pretraživati kad god VIN nije prazan i kliknut je gumb,
-    # ili samo kad nije prazan (ako želiš auto-search).
-    if (search_clicked or vin) and vin.strip():
+    with col3:
+        clear_clicked = st.button("🧹 Očisti", use_container_width=True)
+
+    # logika za Očisti
+    if clear_clicked:
+        st.session_state.vin_input = ""
+        st.experimental_rerun()
+
+    # pretraga se radi SAMO kad se klikne Pretraži i VIN nije prazan
+    if search_clicked and vin.strip():
         vin_query = vin.strip().upper()
 
         if "VINNUMBER" not in df.columns:
@@ -193,7 +239,6 @@ def main():
             st.dataframe(results, use_container_width=True)
     else:
         st.info("Unesi VIN broj i klikni **Pretraži**.")
-
 
 if __name__ == "__main__":
     main()

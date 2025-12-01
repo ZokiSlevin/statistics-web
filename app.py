@@ -124,53 +124,50 @@ def main():
     render_header()
     st.markdown("---")
 
-    # stil za gumbe i input (zelena / crvena kao u Tkinteru)
-    st.markdown("""
-    <style>
-
-        /* === Gumb PRETRAŽI (label sadrži 'Pretraži') === */
-        button[kind="primary"] p {
-            display: none !important; /* Streamlit quirks */
+    # CSS za search traku (input + gumbi)
+    st.markdown(
+        """
+        <style>
+        /* VIN text input unutar PRVOG stupca u ovom redu */
+        div[data-testid="stHorizontalBlock"] div[data-testid="column"]:first-child input[type="text"] {
+            max-width: 320px;
+            height: 38px;
+            font-size: 14px;
         }
 
-        div.stButton > button:has(span:contains("Pretraži")) {
-            background-color: #006400 !important;
-            color: whitesmoke !important;
-            border: 1px solid #006400 !important;
-            width: 140px !important;
-            height: 40px !important;
+        /* Pretraži = drugi stupac */
+        div[data-testid="stHorizontalBlock"] div[data-testid="column"]:nth-child(2) button {
+            background-color: #006400;
+            color: whitesmoke;
+            border: 1px solid #006400;
+            width: 130px;
+            height: 38px;
+            border-radius: 6px;
+        }
+        div[data-testid="stHorizontalBlock"] div[data-testid="column"]:nth-child(2) button:hover {
+            background-color: whitesmoke;
+            color: #006400;
+            border: 1px solid #006400;
         }
 
-        div.stButton > button:has(span:contains("Pretraži")):hover {
-            background-color: whitesmoke !important;
-            color: #006400 !important;
-            border: 1px solid #006400 !important;
+        /* Očisti = treći stupac */
+        div[data-testid="stHorizontalBlock"] div[data-testid="column"]:nth-child(3) button {
+            background-color: #ff6666;
+            color: whitesmoke;
+            border: 1px solid #ff6666;
+            width: 130px;
+            height: 38px;
+            border-radius: 6px;
         }
-
-
-        /* === Gumb OČISTI (label sadrži 'Očisti') === */
-        div.stButton > button:has(span:contains("Očisti")) {
-            background-color: #ff6666 !important;
-            color: whitesmoke !important;
-            border: 1px solid #ff6666 !important;
-            width: 140px !important;
-            height: 40px !important;
+        div[data-testid="stHorizontalBlock"] div[data-testid="column"]:nth-child(3) button:hover {
+            background-color: whitesmoke;
+            color: #ff6666;
+            border: 1px solid #ff6666;
         }
-
-        div.stButton > button:has(span:contains("Očisti")):hover {
-            background-color: whitesmoke !important;
-            color: #ff6666 !important;
-            border: 1px solid #ff6666 !important;
-        }
-
-        /* === VIN INPUT - smanji širinu === */
-        input[type="text"] {
-            width: 300px !important;
-        }
-
-    </style>
-    """, unsafe_allow_html=True)
-
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
     df, err = load_all_data()
     if err:
@@ -187,14 +184,15 @@ def main():
     if "vin_input" not in st.session_state:
         st.session_state.vin_input = ""
 
-    col1, col2, col3 = st.columns([6, 2, 2])
+    # jedan red: VIN | Pretraži | Očisti
+    col1, col2, col3 = st.columns([6, 1.5, 1.5])
 
     with col1:
         vin = st.text_input(
             "Unesi VIN (točan match):",
             value=st.session_state.vin_input,
             max_chars=50,
-            key="vin_input"
+            key="vin_input",
         )
 
     with col2:
@@ -245,13 +243,11 @@ def main():
                 sub = results[results["YEAR"] == year].copy()
                 st.markdown(f"#### Godina {year}")
 
-                # ako ne želiš prikazivati YEAR kolonu u tablici:
                 if "YEAR" in sub.columns:
                     sub = sub.drop(columns=["YEAR"])
 
                 st.dataframe(sub, use_container_width=True)
         else:
-            # fallback – bez YEAR kolone, samo jedna tablica
             st.dataframe(results, use_container_width=True)
     else:
         st.info("Unesi VIN broj i klikni **Pretraži**.")

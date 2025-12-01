@@ -195,6 +195,13 @@ def main():
             key="vin_input",
         )
 
+    # ENTER TRIGGER – ako je korisnik pritisnuo Enter, Streamlit reruna app
+    # pa ovdje možemo automatski pokrenuti pretragu
+    enter_trigger = False
+    if not st.session_state.get("last_vin", "") == st.session_state.vin_input:
+        enter_trigger = True
+    st.session_state.last_vin = st.session_state.vin_input
+
     with col2:
         search_clicked = st.button("🔍 Pretraži", use_container_width=True)
 
@@ -207,7 +214,7 @@ def main():
         st.experimental_rerun()
 
     # pretraga se radi SAMO kad se klikne Pretraži i VIN nije prazan
-    if search_clicked and vin.strip():
+    if (search_clicked or enter_trigger) and vin.strip():
         vin_query = vin.strip().upper()
 
         if "VINNUMBER" not in df.columns:

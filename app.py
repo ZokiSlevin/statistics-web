@@ -124,15 +124,22 @@ def main():
     render_header()
     st.markdown("---")
 
-    # stil za gumbe (zelena / crvena kao u Tkinteru)
+    # stil za gumbe i input (zelena / crvena kao u Tkinteru)
     st.markdown(
         """
         <style>
+        /* VIN text input – smanji širinu */
+        input[type="text"] {
+            width: 320px !important;
+        }
+
         /* Pretraži (drugi stupac u redu) */
         div[data-testid="column"]:nth-of-type(2) button {
             background-color: #006400;
             color: whitesmoke;
             border: 1px solid #006400;
+            width: 130px !important;
+            height: 38px !important;
         }
         div[data-testid="column"]:nth-of-type(2) button:hover {
             background-color: whitesmoke;
@@ -145,6 +152,8 @@ def main():
             background-color: #ff6666;
             color: whitesmoke;
             border: 1px solid #ff6666;
+            width: 130px !important;
+            height: 38px !important;
         }
         div[data-testid="column"]:nth-of-type(3) button:hover {
             background-color: whitesmoke;
@@ -171,7 +180,7 @@ def main():
     if "vin_input" not in st.session_state:
         st.session_state.vin_input = ""
 
-    col1, col2, col3 = st.columns([3, 1, 1])
+    col1, col2, col3 = st.columns([6, 2, 2])
 
     with col1:
         vin = st.text_input(
